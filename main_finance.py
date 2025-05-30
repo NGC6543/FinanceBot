@@ -9,7 +9,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-# from handlers import quiz_words, different_types
+from handlers import handle_records
 
 load_dotenv()
 
@@ -19,18 +19,18 @@ BASE_DIR = Path(__file__).resolve().parent
 
 async def main():
     logging.info('Enter to main Bot')
+    print("Bot has started")
     bot = Bot(
         token=API_TOKEN,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML)
     )
     dp = Dispatcher()
-    # dp.include_routers(quiz_words.router, different_types.router)
+    dp.include_routers(handle_records.router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
-    print(BASE_DIR)
     logging.basicConfig(
         level=logging.WARNING,
         handlers=[logging.StreamHandler(sys.stdout),
