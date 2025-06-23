@@ -2,6 +2,20 @@ import sqlite3
 import datetime
 
 
+today = datetime.date.today()
+first_day_this_month = today.replace(day=1)
+first_day_last_month = (
+    first_day_this_month - datetime.timedelta(days=1)
+).replace(day=1)
+last_day_last_month = first_day_this_month - datetime.timedelta(days=1)
+
+DATE_RANGE_CHOICES_DICT = {
+    'За сегодня': (today, today),
+    'За этот месяц': (first_day_this_month, today),
+    'За прошлый месяц': (first_day_last_month, last_day_last_month),
+    'За всё время': None,
+}
+
 class FinanceDb:
 
     def __init__(self) -> None:
@@ -40,14 +54,29 @@ class FinanceDb:
         except sqlite3.OperationalError as e:
             print('Failed to add data into table', e)
 
-    def retrive_data(self):
+    def retrive_data(self, date):
+        rows = []
         try:
             with sqlite3.connect('finance.db') as con:
                 cur = con.cursor()
-                cur.execute(
-                    'SELECT text, money, category, add_date FROM finance'
-                )
-                rows = cur.fetchall()
+                get_date = DATE_RANGE_CHOICES_DICT.get(date)
+                if not get_date:
+                    cur.execute(
+                        'SELECT text, money, category, add_date FROM finance'
+                    )
+                    rows = cur.fetchall()
+                else:
+                    start_date, end_date = get_date
+                    cur.execute(
+                        """SELECT text, money, category, add_date
+                        FROM finance
+                        WHERE date(add_date)
+                        BETWEEN ? AND ?""", (
+                            start_date.isoformat(), end_date.isoformat()
+                        )
+                    )
+                    rows = cur.fetchall()
                 return rows
         except sqlite3.OperationalError as e:
             print('Failed to retrive data from table', e)
+        return rows

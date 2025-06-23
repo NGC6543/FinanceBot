@@ -23,13 +23,19 @@ from .finance_db import FinanceDb
 
 Также можно улучшить сам механизм добавления и получения данных
 с бд. Может использовать именованные кортежи?
+
+Сделать cursor и connect как декоратор для работы с бд?
 """
 
 
 CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Различные товары')
+DATE_RANGE_CHOICES = (
+    'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время'
+)
 
 router = Router()
 db = FinanceDb()
+db.create_table()
 
 # BASE_DIR = Path(__file__).resolve().parent
 
@@ -84,7 +90,7 @@ async def choice_category(message: types.Message):
 
 @router.message(StateFilter(None), F.text.in_(CATEGORIES))
 async def get_text_expense(message: types.Message, state: FSMContext):
-    """Function for writing user's record in database.
+    """Function for getting user's text.
     """
     logging.info('Start display write_records_in_db function')
     await state.update_data(category=message.text)
@@ -98,6 +104,8 @@ async def get_text_expense(message: types.Message, state: FSMContext):
     EnterExpenses.enter_text,
 )
 async def get_money_expense(message: types.Message, state: FSMContext):
+    """Function for getting user's money.
+    """
     await state.update_data(enter_text=message.text.lower())
     await message.answer(
         text=f"Вы ввели {message.text}, теперь введите сумму:",
@@ -107,11 +115,13 @@ async def get_money_expense(message: types.Message, state: FSMContext):
 
 @router.message(EnterExpenses.enter_money)
 async def adding_data_to_db(message: types.Message, state: FSMContext):
+    """Function for adding user's expense.
+    """
     user_data = await state.get_data()
     await message.answer(
-        text=f"Вы ввели {user_data['enter_text']} с затратами {message.text}."
+        text=f"Вы ввели: {user_data['enter_text']} с затратами {message.text}."
     )
-    db.create_table()  # NEED REMOVE THIS
+    # db.create_table()  # NEED REMOVE THIS
     db.adding_data(
         user_data['enter_text'],
         float(message.text),
@@ -122,13 +132,38 @@ async def adding_data_to_db(message: types.Message, state: FSMContext):
 
 @router.message(F.text == 'Показать расходы')
 async def retrive_data(message: types.Message):
-    data = db.retrive_data()
-    if data is None:
-        await message.answer('No data')
+    """Function for user's choices date.
+    """
+    logging.info('Start retrive_data function')
+    keyboard = [
+        [types.KeyboardButton(text=text)] for text in DATE_RANGE_CHOICES
+    ]
+    keyboard_for_reply = types.ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=True,
+    )
+    await message.answer(
+        'Выберите за какой период показать данные.',
+        reply_markup=keyboard_for_reply,
+        one_time_keyboard=True,
+    )
+
+
+@router.message(F.text.in_(DATE_RANGE_CHOICES))
+async def get_date_range(message: types.Message):
+    """Function getting date specified by a user.
+    """
+    logging.info('Start get_date_range function')
+    data = db.retrive_data(message.text)
+    if not data:
+        await message.answer(f'За период {message.text} данных не было.')
         return
     result_string = ''
+    total_sum = 0
     for info in data:
         result_string += (
-            f'Название расхода: {info[0]},'
-            f'категория: {info[2]}, сумма {str(info[1])} \n')
+            f'Название расхода: {info[0]}, '
+            f'Категория: {info[2]}, сумма {str(info[1])} \n')
+        total_sum += info[1]
+    result_string += f'Общая сумма: {total_sum}'
     await message.answer(result_string)

@@ -34,7 +34,7 @@ if __name__ == '__main__':
     logging.basicConfig(
         level=logging.WARNING,
         handlers=[logging.StreamHandler(sys.stdout),
-                  logging.FileHandler('main.log')
+                  logging.FileHandler('log_main.log')
                   ],
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
