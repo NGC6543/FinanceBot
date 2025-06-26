@@ -140,3 +140,374 @@ pydantic_core._pydantic_core.ValidationError: 1 validation error for SendMessage
 text
   Input should be a valid string [type=string_type, input_value=Message(message_id=214, d...=None, user_shared=None), input_type=Message]
     For further information visit https://errors.pydantic.dev/2.10/v/string_type
+2025-06-23 17:21:18,030 - aiogram.event - ERROR - Cause exception while process update id=817350392 by bot id=8013705189
+TypeError: cannot unpack non-iterable NoneType object
+Traceback (most recent call last):
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\storage\memory.py", line 69, in lock
+    yield
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 158, in get_date_with_range
+    data = db.retrive_data(message.text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\finance_db.py", line 78, in retrive_data
+    start_date, end_date = get_date
+    ^^^^^^^^^^^^^^^^^^^^
+TypeError: cannot unpack non-iterable NoneType object
+2025-06-23 17:21:38,793 - aiogram.event - ERROR - Cause exception while process update id=817350393 by bot id=8013705189
+TypeError: cannot unpack non-iterable NoneType object
+Traceback (most recent call last):
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\storage\memory.py", line 69, in lock
+    yield
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 158, in get_date_with_range
+    data = db.retrive_data(message.text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\finance_db.py", line 78, in retrive_data
+    start_date, end_date = get_date
+    ^^^^^^^^^^^^^^^^^^^^
+TypeError: cannot unpack non-iterable NoneType object
+2025-06-23 17:31:14,110 - aiogram.event - ERROR - Cause exception while process update id=817350401 by bot id=8013705189
+TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType'
+Traceback (most recent call last):
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\storage\memory.py", line 69, in lock
+    yield
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 167, in get_data_by_category
+    total_sum += info[1]
+TypeError: unsupported operand type(s) for +=: 'int' and 'NoneType'
+2025-06-23 17:35:00,218 - aiogram.event - ERROR - Cause exception while process update id=817350408 by bot id=8013705189
+IndexError: tuple index out of range
+Traceback (most recent call last):
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\storage\memory.py", line 69, in lock
+    yield
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 174, in get_data_by_category
+    await get_data(data, message)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 58, in get_data
+    f'Категория: {info[2]}, Сумма {str(info[1])} \n')
+                  ~~~~^^^
+IndexError: tuple index out of range
+2025-06-26 18:48:58,884 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-06-26 18:48:58,885 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8013705189)
+2025-06-26 18:49:13,756 - aiogram.event - ERROR - Cause exception while process update id=817350451 by bot id=8013705189
+NameError: name 'CategoryData' is not defined
+Traceback (most recent call last):
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\storage\memory.py", line 69, in lock
+    yield
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 171, in get_data_by_category
+    data = db.retrive_data_by_category()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\finance_db.py", line 103, in retrive_data_by_category
+    for emp in map(CategoryData._make, cur.fetchall()):
+                   ^^^^^^^^^^^^
+NameError: name 'CategoryData' is not defined
+2025-06-26 18:59:49,604 - aiogram.event - ERROR - Cause exception while process update id=817350458 by bot id=8013705189
+UnboundLocalError: cannot access local variable 'tuple_rows' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 222, in __aexit__
+    await self.gen.athrow(typ, value, traceback)
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\storage\memory.py", line 69, in lock
+    yield
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\handle_records.py", line 184, in get_date_with_range
+    data = db.retrive_data_by_date(message.text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dimas-PC\VScode_Projects\Python\Projects\Telegram_Home_Finance\handlers\finance_db.py", line 85, in retrive_data_by_date
+    return tuple_rows
+           ^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'tuple_rows' where it is not associated with a value
+2025-06-26 19:00:09,802 - aiogram.dispatcher - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2672)
+2025-06-26 19:00:09,803 - aiogram.dispatcher - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8013705189)

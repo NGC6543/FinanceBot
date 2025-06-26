@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+from collections import namedtuple
 
 
 today = datetime.date.today()
@@ -15,6 +16,10 @@ DATE_RANGE_CHOICES_DICT = {
     'За прошлый месяц': (first_day_last_month, last_day_last_month),
     'За всё время': None,
 }
+
+DB_DATE_DATA = namedtuple('DB_DATE_DATA', 'text, money, category, add_date')
+DB_CATEGORY_DATA = namedtuple('DB_CATEGORY_DATA', 'money, category')
+
 
 class FinanceDb:
 
@@ -39,7 +44,7 @@ class FinanceDb:
                 );""")
                 con.commit()
         except sqlite3.OperationalError as e:
-            print('Failed to create tables:', e)
+            print('Failed to create table:', e)
 
     def adding_data(self, text, money, category):
         try:
@@ -54,7 +59,7 @@ class FinanceDb:
         except sqlite3.OperationalError as e:
             print('Failed to add data into table', e)
 
-    def retrive_data(self, date):
+    def retrive_data_by_date(self, date):
         rows = []
         try:
             with sqlite3.connect('finance.db') as con:
@@ -76,7 +81,32 @@ class FinanceDb:
                         )
                     )
                     rows = cur.fetchall()
-                return rows
+                tuple_rows = (DB_DATE_DATA._make(row) for row in rows)
+                return tuple_rows
+        except sqlite3.OperationalError as e:
+            print('Failed to retrive data from table', e)
+        return rows
+
+    def retrive_data_by_category(self):
+        rows = []
+        try:
+            with sqlite3.connect('finance.db') as con:
+                cur = con.cursor()
+                start_date, end_date = first_day_this_month, today
+                cur.execute(
+                    """SELECT SUM(money), category
+                    FROM finance
+                    WHERE date(add_date)
+                    BETWEEN ? AND ?
+                    GROUP BY category;""", (
+                        start_date.isoformat(), end_date.isoformat()
+                    )
+                )
+                rows = cur.fetchall()
+                tuple_rows = (
+                    DB_CATEGORY_DATA._make(row) for row in rows
+                )
+                return tuple_rows
         except sqlite3.OperationalError as e:
             print('Failed to retrive data from table', e)
         return rows

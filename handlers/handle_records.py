@@ -1,11 +1,9 @@
 import logging
-import random
 
 from aiogram import F, Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 from .finance_db import FinanceDb
 
@@ -15,35 +13,41 @@ from .finance_db import FinanceDb
 текста расхода и суммы. По пути пользователь также выбирает категорию,
 которую мы храним в State().
 
-Мне не нравится взаимодействие с бд. Надо это пофикстить.
-Убрать создание бд. Или вообще или в этом файле точно.
-Каждый раз не нужно ее вызывать.
-
-В функции retrive_data поменять вывод. Не использовать индексы.
-
-Также можно улучшить сам механизм добавления и получения данных
-с бд. Может использовать именованные кортежи?
-
 Сделать cursor и connect как декоратор для работы с бд?
 """
 
 
 CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Различные товары')
-DATE_RANGE_CHOICES = (
-    'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время'
+DATA_RETRIVE_CHOICES = (
+    'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
+    'По категориям'
 )
 
 router = Router()
 db = FinanceDb()
 db.create_table()
 
-# BASE_DIR = Path(__file__).resolve().parent
-
 
 class EnterExpenses(StatesGroup):
     enter_text = State()
     enter_money = State()
     category = State()
+
+
+async def get_data(data, message):
+    if not data:
+        await message.answer(f'За период {message.text} данных не было.')
+        return
+    result_string = ''
+    total_sum = 0
+    for info in data:
+        # if 
+        result_string += (
+            f'Название расхода: {info[0]}, '
+            f'Категория: {info[2]}, Сумма {str(info[1])} \n')
+        total_sum += info[1]
+    result_string += f'Общая сумма: {total_sum}'
+    await message.answer(result_string)
 
 
 @router.message(Command('MenuList'))
@@ -121,13 +125,13 @@ async def adding_data_to_db(message: types.Message, state: FSMContext):
     await message.answer(
         text=f"Вы ввели: {user_data['enter_text']} с затратами {message.text}."
     )
-    # db.create_table()  # NEED REMOVE THIS
     db.adding_data(
         user_data['enter_text'],
         float(message.text),
         user_data['category']
     )
     await state.clear()
+    await show_menu(message)
 
 
 @router.message(F.text == 'Показать расходы')
@@ -136,7 +140,7 @@ async def retrive_data(message: types.Message):
     """
     logging.info('Start retrive_data function')
     keyboard = [
-        [types.KeyboardButton(text=text)] for text in DATE_RANGE_CHOICES
+        [types.KeyboardButton(text=text)] for text in DATA_RETRIVE_CHOICES
     ]
     keyboard_for_reply = types.ReplyKeyboardMarkup(
         keyboard=keyboard,
@@ -149,12 +153,31 @@ async def retrive_data(message: types.Message):
     )
 
 
-@router.message(F.text.in_(DATE_RANGE_CHOICES))
-async def get_date_range(message: types.Message):
-    """Function getting date specified by a user.
+@router.message(F.text == 'По категориям')
+async def get_data_by_category(message: types.Message):
+    """Function for getting data group by a category.
+    """
+    logging.info('Start get_data_by_category function')
+    data = db.retrive_data_by_category()
+    if not data:
+        await message.answer(f'За период {message.text} данных не было.')
+        return
+    result_string = 'За этот месяц расходы по категориям: \n'
+    total_sum = 0
+    for info in data:
+        result_string += (
+            f'Категория: {info.category}, Сумма {str(info.money)} \n')
+        total_sum += info[0]
+    result_string += f'Общая сумма: {total_sum}'
+    await message.answer(result_string)
+
+
+@router.message(F.text.in_(DATA_RETRIVE_CHOICES))
+async def get_date_with_range(message: types.Message):
+    """Function for getting data with a specific date.
     """
     logging.info('Start get_date_range function')
-    data = db.retrive_data(message.text)
+    data = db.retrive_data_by_date(message.text)
     if not data:
         await message.answer(f'За период {message.text} данных не было.')
         return
@@ -162,8 +185,8 @@ async def get_date_range(message: types.Message):
     total_sum = 0
     for info in data:
         result_string += (
-            f'Название расхода: {info[0]}, '
-            f'Категория: {info[2]}, сумма {str(info[1])} \n')
+            f'Название расхода: {info.text}, '
+            f'Категория: {info.category}, Сумма {str(info.money)} \n')
         total_sum += info[1]
     result_string += f'Общая сумма: {total_sum}'
     await message.answer(result_string)
