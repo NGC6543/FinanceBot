@@ -73,7 +73,7 @@ class FinanceDb:
                 else:
                     start_date, end_date = get_date
                     cur.execute(
-                        """SELECT text, money, category, add_date
+                        """SELECT text, money, category, datetime(add_date)
                         FROM finance
                         WHERE date(add_date)
                         BETWEEN ? AND ?""", (

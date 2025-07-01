@@ -34,23 +34,32 @@ class EnterExpenses(StatesGroup):
     category = State()
 
 
-async def get_data(data, message):
+async def get_data(data, message, category=False):
+    """Function for getting data either by date or category.
+    """
     if not data:
         await message.answer(f'За период {message.text} данных не было.')
         return
     result_string = ''
     total_sum = 0
-    for info in data:
-        # if 
-        result_string += (
-            f'Название расхода: {info[0]}, '
-            f'Категория: {info[2]}, Сумма {str(info[1])} \n')
-        total_sum += info[1]
+    if category:
+        result_string = 'За этот месяц расходы по категориям: \n'
+        for info in data:
+            result_string += (
+                f'Категория: {info.category}, Сумма {str(info.money)}\n')
+            total_sum += info.money
+    else:
+        for info in data:
+            result_string += (
+                f'Название расхода: {info.text}, '
+                f'Категория: {info.category}, Сумма {str(info.money)}\n'
+                f'Время: {info.add_date}\n')
+            total_sum += info.money
     result_string += f'Общая сумма: {total_sum}'
     await message.answer(result_string)
 
 
-@router.message(Command('MenuList'))
+@router.message(Command('menulist'))
 async def show_menu(message: types.Message):
     """Function for displaying menu.
 
@@ -159,17 +168,10 @@ async def get_data_by_category(message: types.Message):
     """
     logging.info('Start get_data_by_category function')
     data = db.retrive_data_by_category()
-    if not data:
-        await message.answer(f'За период {message.text} данных не было.')
-        return
-    result_string = 'За этот месяц расходы по категориям: \n'
-    total_sum = 0
-    for info in data:
-        result_string += (
-            f'Категория: {info.category}, Сумма {str(info.money)} \n')
-        total_sum += info[0]
-    result_string += f'Общая сумма: {total_sum}'
-    await message.answer(result_string)
+    # print(dir(message.chat.id))
+    print(message.chat.id)
+    print(message.chat.first)
+    await get_data(data, message, category=True)
 
 
 @router.message(F.text.in_(DATA_RETRIVE_CHOICES))
@@ -178,15 +180,4 @@ async def get_date_with_range(message: types.Message):
     """
     logging.info('Start get_date_range function')
     data = db.retrive_data_by_date(message.text)
-    if not data:
-        await message.answer(f'За период {message.text} данных не было.')
-        return
-    result_string = ''
-    total_sum = 0
-    for info in data:
-        result_string += (
-            f'Название расхода: {info.text}, '
-            f'Категория: {info.category}, Сумма {str(info.money)} \n')
-        total_sum += info[1]
-    result_string += f'Общая сумма: {total_sum}'
-    await message.answer(result_string)
+    await get_data(data, message, category=False)
