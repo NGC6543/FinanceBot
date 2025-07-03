@@ -31,6 +31,10 @@ class EnterExpenses(StatesGroup):
     category = State()
 
 
+class DeleteExpense(StatesGroup):
+    expense_id = State()
+
+
 async def return_data_from_db(data, message, category=False):
     """Additional function for getting data either by date or category.
     """
@@ -179,22 +183,33 @@ async def get_date_with_range(message: types.Message):
     await return_data_from_db(data, message, category=False)
 
 
-@router.message(F.text == 'Удалить расход')
-async def remove_expense(message: types.Message):
+# @router.message(F.text == 'Удалить расход')
+# async def remove_expense(message: types.Message):
+#     """Function for deleting expense by id.
+#     """
+#     logging.info('Start display choice_category function')
+#     data = db.retrive_data_by_date('За всё время', message.chat.id)
+#     await return_data_from_db(data, message, category=False)
+#     await message.answer('Введите номер (id) расхода')
+@router.message(StateFilter(None), Command('Удалить расход'))
+async def remove_expense(message: types.Message, state: FSMContext):
     """Function for deleting expense by id.
     """
-    logging.info('Start display choice_category function')
+    logging.info('Start display remove_expense function')
     data = db.retrive_data_by_date('За всё время', message.chat.id)
     await return_data_from_db(data, message, category=False)
-    await message.answer('Введите номер расхода')
+    await message.answer('Введите номер (id) расхода')
+    await state.set_state(DeleteExpense.expense_id)
 
 
-@router.message(F.text)
-async def get_id_to_remove_from_db(message: types.Message):
+@router.message(DeleteExpense(F.text))
+async def get_id_to_remove_from_db(message: types.Message, state: FSMContext):
     """Delete record from db by id
     """
     logging.info('Delete record from db by id')
-    delete_record = db.delete_record_by_id(message.text, message.chat.id)
+    await state.update_data(expense_id=message.text)
+    user_data = await state.get_data()
+    delete_record = db.delete_record_by_id(user_data['expense_id'], message.chat.id)
     if not delete_record:
         await message.answer('Такой записи нет или она не является вашей.')
     else:
