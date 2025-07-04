@@ -11,9 +11,3 @@ CREATE TABLE IF NOT EXISTS finance (
                     add_date DATE,
                     user_id INTEGER,
                     FOREIGN KEY(user_id) REFERENCES user(telegram_id));
-
--- UPDATE finance
--- SET user_id = 193191911
--- WHERE user_id IS NULL;
-
--- DELETE FROM finance WHERE text = 'test';
