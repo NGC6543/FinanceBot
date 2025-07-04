@@ -13,11 +13,11 @@ from .finance_db import FinanceDb
 текста расхода и суммы. По пути пользователь также выбирает категорию,
 которую мы храним в State().
 
-Сделать cursor и connect как декоратор для работы с бд?
+Удаление также происходит с помощь конечных автоматов.
 """
 
 
-CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Различные товары')
+CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Прочее')
 DATA_RETRIVE_CHOICES = (
     'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
     'По категориям'
@@ -25,7 +25,6 @@ DATA_RETRIVE_CHOICES = (
 
 router = Router()
 db = FinanceDb()
-db.create_table()
 
 
 class EnterExpenses(StatesGroup):
@@ -34,23 +33,36 @@ class EnterExpenses(StatesGroup):
     category = State()
 
 
-async def get_data(data, message):
+class DeleteExpense(StatesGroup):
+    expense_id = State()
+
+
+async def return_data_from_db(data, message, category=False):
+    """Additional function for getting data either by date or category.
+    """
     if not data:
         await message.answer(f'За период {message.text} данных не было.')
         return
     result_string = ''
     total_sum = 0
-    for info in data:
-        # if 
-        result_string += (
-            f'Название расхода: {info[0]}, '
-            f'Категория: {info[2]}, Сумма {str(info[1])} \n')
-        total_sum += info[1]
+    if category:
+        result_string = 'За этот месяц расходы по категориям: \n'
+        for info in data:
+            result_string += (
+                f'Категория: {info.category}, Сумма {str(info.money)}\n')
+            total_sum += info.money
+    else:
+        for info in data:
+            result_string += (
+                f'{info.id}. {info.text},\n'
+                f'Категория: {info.category},\nСумма {str(info.money)} тг.\n'
+                f'Время: {info.add_date}\n\n')
+            total_sum += info.money
     result_string += f'Общая сумма: {total_sum}'
     await message.answer(result_string)
 
 
-@router.message(Command('MenuList'))
+@router.message(Command('menulist'))
 async def show_menu(message: types.Message):
     """Function for displaying menu.
 
@@ -61,6 +73,7 @@ async def show_menu(message: types.Message):
         [
             types.KeyboardButton(text='Внести расходы'),
             types.KeyboardButton(text='Показать расходы'),
+            types.KeyboardButton(text='Удалить расход'),
         ]
     ]
     keyboard_for_reply = types.ReplyKeyboardMarkup(
@@ -128,7 +141,8 @@ async def adding_data_to_db(message: types.Message, state: FSMContext):
     db.adding_data(
         user_data['enter_text'],
         float(message.text),
-        user_data['category']
+        user_data['category'],
+        int(message.chat.id)
     )
     await state.clear()
     await show_menu(message)
@@ -158,18 +172,8 @@ async def get_data_by_category(message: types.Message):
     """Function for getting data group by a category.
     """
     logging.info('Start get_data_by_category function')
-    data = db.retrive_data_by_category()
-    if not data:
-        await message.answer(f'За период {message.text} данных не было.')
-        return
-    result_string = 'За этот месяц расходы по категориям: \n'
-    total_sum = 0
-    for info in data:
-        result_string += (
-            f'Категория: {info.category}, Сумма {str(info.money)} \n')
-        total_sum += info[0]
-    result_string += f'Общая сумма: {total_sum}'
-    await message.answer(result_string)
+    data = db.retrive_data_by_category(message.chat.id)
+    await return_data_from_db(data, message, category=True)
 
 
 @router.message(F.text.in_(DATA_RETRIVE_CHOICES))
@@ -177,16 +181,35 @@ async def get_date_with_range(message: types.Message):
     """Function for getting data with a specific date.
     """
     logging.info('Start get_date_range function')
-    data = db.retrive_data_by_date(message.text)
-    if not data:
-        await message.answer(f'За период {message.text} данных не было.')
-        return
-    result_string = ''
-    total_sum = 0
-    for info in data:
-        result_string += (
-            f'Название расхода: {info.text}, '
-            f'Категория: {info.category}, Сумма {str(info.money)} \n')
-        total_sum += info[1]
-    result_string += f'Общая сумма: {total_sum}'
-    await message.answer(result_string)
+    data = db.retrive_data_by_date(message.text, message.chat.id)
+    await return_data_from_db(data, message, category=False)
+
+
+@router.message(StateFilter(None), F.text == 'Удалить расход')
+async def remove_expense(message: types.Message, state: FSMContext):
+    """Function for deleting expense by id.
+    """
+    logging.info('Start display remove_expense function')
+    data = db.retrive_data_by_date('За этот месяц', message.chat.id)
+    await message.answer('Расходы за этот месяц:')
+    await return_data_from_db(data, message, category=False)
+    await message.answer('Введите номер (id) расхода')
+    await state.set_state(DeleteExpense.expense_id)
+
+
+@router.message(DeleteExpense.expense_id)
+async def get_id_to_remove_from_db(message: types.Message, state: FSMContext):
+    """Delete record from db by id
+    """
+    logging.info('Delete record from db by id')
+    await state.update_data(expense_id=message.text)
+    user_data = await state.get_data()
+    delete_record = db.delete_record_by_id(
+        user_data['expense_id'],
+        message.chat.id
+    )
+    if not delete_record:
+        await message.answer('Такой записи нет или она не является вашей.')
+    else:
+        await message.answer('Запись удалена')
+    await state.clear()
