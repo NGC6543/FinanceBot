@@ -27,8 +27,8 @@ API_TOKEN=*ТОКЕН БОТА*
 
 Создать базу данных и таблицы с помощью команд в интерпретаторе
 ```bash
-from finance_db import create_db
-create_db()
+from handlers.finance_db import FinanceDb
+FinanceDb().create_db()
 ```
 
 Запустить бота:
