@@ -213,3 +213,4 @@ async def get_id_to_remove_from_db(message: types.Message, state: FSMContext):
     else:
         await message.answer('Запись удалена')
     await state.clear()
+    await show_menu(message)

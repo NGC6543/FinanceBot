@@ -26,9 +26,6 @@ DB_CATEGORY_DATA = namedtuple('DB_CATEGORY_DATA', 'money, category')
 
 class FinanceDb:
 
-    def __init__(self) -> None:
-        ...
-
     def connect_db(self):
         """Function for creating connection with db."""
         conn = sqlite3.connect('finance.db')
