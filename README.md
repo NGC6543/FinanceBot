@@ -51,4 +51,5 @@ python main_finance.py
 - Python 3.11.0
 - aiogram
 - SQL
+- Docker
 
