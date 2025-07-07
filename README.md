@@ -7,7 +7,25 @@
 Расходы могут быть показаны по различному времени: за сегодня, за этот месяц, за прошлый месяц, за всё время и по категориям.  
 Удаляется расход по его номеру (id).
 
-# Запуск проекта:
+
+# Запуск проекта через Dockerfile:
+В Dockerfile добавить переменную окружения:
+```bash 
+ENV API_TOKEN=""
+```
+
+Создать образ:
+```bash 
+docker build -t tghomefinance ./
+```
+
+Запустить контейнер:
+```bash 
+docker run -d --name tg tghomefinance
+```
+
+
+# Запуск проекта локально:
 Клонировать репозиторий и перейти в него в терминале:
 ```bash 
 git clone https://github.com/NGC6543/FinanceBot.git
@@ -24,20 +42,12 @@ pip install -r requirements.txt
 API_TOKEN=*ТОКЕН БОТА*
 ```
 
-
-Создать базу данных и таблицы с помощью команд в интерпретаторе
-```bash
-from handlers.finance_db import FinanceDb
-FinanceDb().create_db()
-```
-
 Запустить бота:
 ```bash
 python main_finance.py
 ```
 
 # Стек технологий
-
 - Python 3.11.0
 - aiogram
 - SQL

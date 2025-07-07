@@ -11,7 +11,9 @@ router = Router()
 async def return_help_message(message: types.Message):
     logging.info('Starting function with help command')
     help_message = """
-    Для ввода расходов следуйте инструкции по вводу расхода.
+    Для ввода расходов выберите команду /menulist.
+    Необходимо будет выбрать категорию, затем ввести текст\n
+    расхода и сумму расхода.
 
     Вывод расходов будет в таком виде:
     <id расхода>. <Название расхода>:

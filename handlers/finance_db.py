@@ -42,7 +42,7 @@ class FinanceDb:
     def adding_data(self, text, money, category, user_id):
         """Function for adding data in db."""
         try:
-            with sqlite3.connect('finance.db') as con:
+            with self.connect_db() as con:
                 cur = con.cursor()
                 get_time = datetime.datetime.now()
                 cur.execute(
@@ -68,7 +68,7 @@ class FinanceDb:
         """Function for retrieving data by date."""
         rows = []
         try:
-            with sqlite3.connect('finance.db') as con:
+            with self.connect_db() as con:
                 cur = con.cursor()
                 get_date = DATE_RANGE_CHOICES_DICT.get(date)
                 if not get_date:
@@ -101,7 +101,7 @@ class FinanceDb:
         """Function for retrieving data by category."""
         rows = []
         try:
-            with sqlite3.connect('finance.db') as con:
+            with self.connect_db() as con:
                 cur = con.cursor()
                 start_date, end_date = first_day_this_month, today
                 cur.execute(
@@ -127,7 +127,7 @@ class FinanceDb:
     def delete_record_by_id(self, record_id, user_id):
         """Function for deleting data by id."""
         try:
-            with sqlite3.connect('finance.db') as con:
+            with self.connect_db() as con:
                 cur = con.cursor()
                 check_record = cur.execute(
                     """SELECT 1 FROM finance
