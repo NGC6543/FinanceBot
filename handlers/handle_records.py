@@ -135,6 +135,12 @@ async def adding_data_to_db(message: types.Message, state: FSMContext):
     """Function for adding user's expense.
     """
     user_data = await state.get_data()
+    try:
+        float(message.text)
+    except ValueError:
+        await message.answer('Необходимо ввести цифры. Давайте заново')
+        await get_money_expense(message, state)
+        return
     await message.answer(
         text=f"Вы ввели: {user_data['enter_text']} с затратами {message.text}."
     )
