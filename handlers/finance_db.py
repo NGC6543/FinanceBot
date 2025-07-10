@@ -1,6 +1,12 @@
+import os
 import sqlite3
 import datetime
 from collections import namedtuple
+
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 today = datetime.date.today()
@@ -28,14 +34,23 @@ class FinanceDb:
 
     def connect_db(self):
         """Function for creating connection with db."""
-        conn = sqlite3.connect('finance.db')
+        # conn = sqlite3.connect('finance.db')
+        conn = psycopg2.connect(
+            dbname=os.getenv('DBNAME'),
+            host=os.getenv('HOST'),
+            user=os.getenv('USER'),
+            password=os.getenv('PASSWORD'),
+            port=os.getenv('PORT'),
+        )
         return conn
 
     def create_db(self):
         """Function for creating tables in db."""
         db = self.connect_db()
-        with open('schema.sql', mode='r') as f:
-            db.cursor().executescript(f.read())
+        with db as cursor:
+            cursor.execute(open("schema.sql", "r").read())
+        # with open('schema.sql', mode='r') as f:
+        #     db.cursor().executescript(f.read())
         db.commit()
         db.close()
 
