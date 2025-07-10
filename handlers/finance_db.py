@@ -1,5 +1,4 @@
 import os
-import sqlite3
 import datetime
 from collections import namedtuple
 
@@ -34,10 +33,9 @@ class FinanceDb:
 
     def connect_db(self):
         """Function for creating connection with db."""
-        # conn = sqlite3.connect('finance.db')
         conn = psycopg2.connect(
             dbname=os.getenv('DBNAME'),
-            host=os.getenv('HOST'),
+            host=os.getenv('HOST', 'localhost'),
             user=os.getenv('USER'),
             password=os.getenv('PASSWORD'),
             port=os.getenv('PORT'),
@@ -47,10 +45,8 @@ class FinanceDb:
     def create_db(self):
         """Function for creating tables in db."""
         db = self.connect_db()
-        with db as cursor:
+        with db.cursor() as cursor:
             cursor.execute(open("schema.sql", "r").read())
-        # with open('schema.sql', mode='r') as f:
-        #     db.cursor().executescript(f.read())
         db.commit()
         db.close()
 
@@ -61,22 +57,24 @@ class FinanceDb:
                 cur = con.cursor()
                 get_time = datetime.datetime.now()
                 cur.execute(
-                    "SELECT 1 FROM user WHERE telegram_id = ?", (user_id,)
+                    "SELECT 1 FROM users WHERE telegram_id = (%s)",
+                    (user_id,)
                 )
                 if not cur.fetchone():
                     cur.execute(
-                        "INSERT INTO user (telegram_id) VALUES (?)", (user_id,)
+                        "INSERT INTO users (telegram_id) VALUES (%s)",
+                        (user_id,)
                     )
 
                 cur.execute(
                     """INSERT INTO finance(text, money, category,
                     add_date, user_id)
-                    values(?, ?, ?, ?, ?)""", (
+                    values(%s , %s , %s, %s, %s)""", (
                         text, money, category, get_time, user_id
                     )
                 )
                 con.commit()
-        except sqlite3.OperationalError as e:
+        except psycopg2.OperationalError as e:
             print('Failed to add data into table', e)
 
     def retrive_data_by_date(self, date, user_id):
@@ -88,18 +86,20 @@ class FinanceDb:
                 get_date = DATE_RANGE_CHOICES_DICT.get(date)
                 if not get_date:
                     cur.execute(
-                        """SELECT id, text, money, category, datetime(add_date)
+                        """SELECT id, text, money, category,
+                        add_date::timestamp
                         FROM finance
-                        WHERE user_id = (?)""", (user_id,)
+                        WHERE user_id = %s""", (user_id,)
                     )
                     rows = cur.fetchall()
                 else:
                     start_date, end_date = get_date
                     cur.execute(
-                        """SELECT id, text, money, category, datetime(add_date)
+                        """SELECT id, text, money, category,
+                        add_date::timestamp
                         FROM finance
-                        WHERE date(add_date)
-                        BETWEEN ? AND ? AND user_id = (?)""", (
+                        WHERE add_date::timestamp
+                        BETWEEN %s AND %s AND user_id = %s""", (
                             start_date.isoformat(),
                             end_date.isoformat(),
                             user_id
@@ -108,7 +108,7 @@ class FinanceDb:
                     rows = cur.fetchall()
                 tuple_rows = (DB_DATE_DATA._make(row) for row in rows)
                 return tuple_rows
-        except sqlite3.OperationalError as e:
+        except psycopg2.OperationalError as e:
             print('Failed to retrive data from table', e)
         return rows
 
@@ -122,8 +122,8 @@ class FinanceDb:
                 cur.execute(
                     """SELECT SUM(money), category
                     FROM finance
-                    WHERE date(add_date)
-                    BETWEEN ? AND ? AND user_id = (?)
+                    WHERE add_date::timestamp
+                    BETWEEN %s AND %s AND user_id = %s
                     GROUP BY category;""", (
                         start_date.isoformat(),
                         end_date.isoformat(),
@@ -135,7 +135,7 @@ class FinanceDb:
                     DB_CATEGORY_DATA._make(row) for row in rows
                 )
                 return tuple_rows
-        except sqlite3.OperationalError as e:
+        except psycopg2.OperationalError as e:
             print('Failed to retrive data from table', e)
         return rows
 
@@ -144,17 +144,17 @@ class FinanceDb:
         try:
             with self.connect_db() as con:
                 cur = con.cursor()
-                check_record = cur.execute(
+                cur.execute(
                     """SELECT 1 FROM finance
-                    WHERE id = (?) AND user_id = (?)""",
+                    WHERE id = %s AND user_id = %s""",
                     (record_id, user_id)
                 )
-                if not check_record.fetchone():
+                if not cur.fetchone():
                     return False
                 cur.execute(
                     """DELETE FROM finance
-                    WHERE id = (?)""", (record_id,))
+                    WHERE id = %s""", (record_id,))
                 con.commit()
-        except sqlite3.OperationalError as e:
+        except psycopg2.OperationalError as e:
             print('Failed to delete data from table', e)
         return True
