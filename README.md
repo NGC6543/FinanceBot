@@ -9,19 +9,20 @@
 
 
 # Запуск проекта через Dockerfile:
-В Dockerfile добавить переменную окружения:
-```bash 
-ENV API_TOKEN=""
+
+Клонировать репозиторий и перейти в него в терминале:
+```bash
+git clone https://github.com/NGC6543/FinanceBot.git
 ```
 
-Создать образ:
-```bash 
-docker build -t tghomefinance ./
+Перейти в директорию infra:
+```bash
+cd infra/
 ```
 
-Запустить контейнер:
-```bash 
-docker run -d --name tg tghomefinance
+Запустить образы из файла Docker-compose:
+```bash
+docker compose -f docker-compose.yml up -d --build
 ```
 
 
@@ -45,11 +46,11 @@ https://www.postgresql.org/download/
 Создать файл .env и указать API токен бота:
 ```bash
 API_TOKEN=*ТОКЕН БОТА*
-DBNAME="finance"
-HOST="localhost"
-USER=<ваш логин (обычно postgres)>
-PASSWORD=<ваш пароль>
-PORT=5432
+POSTGRES_DB="finance"
+DB_HOST=db
+POSTGRES_USER=<ваш логин (обычно postgres)>
+POSTGRES_PASSWORD=<ваш пароль>
+DB_PORT=5432
 ```
 
 Запустить бота:

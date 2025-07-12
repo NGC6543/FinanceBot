@@ -34,11 +34,11 @@ class FinanceDb:
     def connect_db(self):
         """Function for creating connection with db."""
         conn = psycopg2.connect(
-            dbname=os.getenv('DBNAME'),
-            host=os.getenv('HOST', 'localhost'),
-            user=os.getenv('USER'),
-            password=os.getenv('PASSWORD'),
-            port=os.getenv('PORT'),
+            dbname=os.getenv('POSTGRES_DB'),
+            host=os.getenv('DB_HOST', 'localhost'),
+            user=os.getenv('POSTGRES_USER'),
+            password=os.getenv('POSTGRES_PASSWORD'),
+            port=os.getenv('DB_PORT'),
         )
         return conn
 
