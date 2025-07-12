@@ -49,7 +49,7 @@ async def return_data_from_db(data, message, category=False):
         result_string = 'За этот месяц расходы по категориям: \n'
         for info in data:
             result_string += (
-                f'Категория: {info.category}, Сумма {str(info.money)}\n')
+                f'Категория: {info.category}, Сумма {str((info.money))}\n')
             total_sum += info.money
     else:
         for info in data:
@@ -58,7 +58,7 @@ async def return_data_from_db(data, message, category=False):
                 f'Категория: {info.category},\nСумма {str(info.money)} тг.\n'
                 f'Время: {info.add_date}\n\n')
             total_sum += info.money
-    result_string += f'Общая сумма: {total_sum}'
+    result_string += f'Общая сумма: {round(total_sum, 2)}'
     await message.answer(result_string)
 
 

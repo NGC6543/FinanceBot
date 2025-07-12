@@ -37,9 +37,19 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+Установить PostgreSQL и запустить его
+```bash
+https://www.postgresql.org/download/
+```
+
 Создать файл .env и указать API токен бота:
 ```bash
 API_TOKEN=*ТОКЕН БОТА*
+DBNAME="finance"
+HOST="localhost"
+USER=<ваш логин (обычно postgres)>
+PASSWORD=<ваш пароль>
+PORT=5432
 ```
 
 Запустить бота:
@@ -50,6 +60,6 @@ python main_finance.py
 # Стек технологий
 - Python 3.11.0
 - aiogram
-- SQL
+- PostgreSQL
 - Docker
 
