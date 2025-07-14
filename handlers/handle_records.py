@@ -4,8 +4,12 @@ from aiogram import F, Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
+from aiogram.utils.formatting import Bold, Text, as_line
 
 from .finance_db import FinanceDb
+from kbds.reply import (
+    menu_keyboard, catogories_keyboard, show_expenses_keyboard,
+    CATEGORIES, DATA_RETRIVE_CHOICES)
 
 
 """
@@ -16,12 +20,6 @@ from .finance_db import FinanceDb
 Удаление также происходит с помощь конечных автоматов.
 """
 
-
-CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Прочее')
-DATA_RETRIVE_CHOICES = (
-    'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
-    'По категориям'
-)
 
 router = Router()
 db = FinanceDb()
@@ -43,48 +41,43 @@ async def return_data_from_db(data, message, category=False):
     if not data:
         await message.answer(f'За период {message.text} данных не было.')
         return
-    result_string = ''
+    result_string = Text()
     total_sum = 0
     if category:
-        result_string = 'За этот месяц расходы по категориям: \n'
+        result_string = as_line('За этот месяц расходы по категориям: ')
         for info in data:
-            result_string += (
-                f'Категория: {info.category}, Сумма {str((info.money))}\n')
+            result_string += as_line(
+                'Категория: ', Bold(info.category),
+                'Сумма: ', Bold(str((info.money))),
+                sep=' ', end='\n'
+            )
             total_sum += info.money
     else:
         for info in data:
-            result_string += (
-                f'{info.id}. {info.text},\n'
-                f'Категория: {info.category},\nСумма {str(info.money)} тг.\n'
-                f'Время: {info.add_date}\n\n')
+            result_string += as_line(
+                Bold(f'{info.id}.', f'{info.text}'), '\n',
+                'Категория: ', info.category, '\n',
+                'Сумма: ', str(info.money), 'тг.', '\n',
+                'Время: ', info.add_date, '\n',
+                sep=' ',
+            )
             total_sum += info.money
-    result_string += f'Общая сумма: {round(total_sum, 2)}'
-    await message.answer(result_string)
+    result_string += Text('Общая сумма: ', Bold(round(total_sum, 2)))
+    await message.answer(result_string.as_html())
 
 
 @router.message(Command('menulist'))
 async def show_menu(message: types.Message):
     """Function for displaying menu.
-
-    For now only two options - Внести расходы and Показать расходы.
     """
-    logging.info('Starting display commands in show_menu function')
-    keyboard = [
-        [
-            types.KeyboardButton(text='Внести расходы'),
-            types.KeyboardButton(text='Показать расходы'),
-            types.KeyboardButton(text='Удалить расход'),
-        ]
-    ]
-    keyboard_for_reply = types.ReplyKeyboardMarkup(
-        keyboard=keyboard,
-        resize_keyboard=True,
-        input_field_placeholder='Выберите функцию.'
-    )
+    logging.info('Starting display commands in menulist function')
     await message.answer(
         'Выберите команду',
-        reply_markup=keyboard_for_reply,
-        one_time_keyboard=True
+        reply_markup=menu_keyboard.as_markup(
+            resize_keyboard=True,
+            input_field_placeholder='Выберите функцию.',
+            one_time_keyboard=True,
+        ),
     )
 
 
@@ -93,15 +86,12 @@ async def choice_category(message: types.Message):
     """Function for displaying categories.
     """
     logging.info('Start display choice_category function')
-    keyboard = [[types.KeyboardButton(text=text)] for text in CATEGORIES]
-    keyboard_for_reply = types.ReplyKeyboardMarkup(
-        keyboard=keyboard,
-        resize_keyboard=True,
-    )
     await message.answer(
         'Выберите категорию',
-        reply_markup=keyboard_for_reply,
-        one_time_keyboard=True,
+        reply_markup=catogories_keyboard.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=True,
+        ),
     )
 
 
@@ -159,17 +149,12 @@ async def retrive_data(message: types.Message):
     """Function for user's choices date.
     """
     logging.info('Start retrive_data function')
-    keyboard = [
-        [types.KeyboardButton(text=text)] for text in DATA_RETRIVE_CHOICES
-    ]
-    keyboard_for_reply = types.ReplyKeyboardMarkup(
-        keyboard=keyboard,
-        resize_keyboard=True,
-    )
     await message.answer(
         'Выберите за какой период показать данные.',
-        reply_markup=keyboard_for_reply,
-        one_time_keyboard=True,
+        reply_markup=show_expenses_keyboard.as_markup(
+            resize_keyboard=True,
+            one_time_keyboard=True,
+        ),
     )
 
 

@@ -7,7 +7,7 @@ from aiogram.filters import Command
 router = Router()
 
 
-@router.message(Command('help'))
+@router.message(Command('start', 'help'))
 async def return_help_message(message: types.Message):
     logging.info('Starting function with help command')
     help_message = """

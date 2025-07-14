@@ -15,6 +15,16 @@
 git clone https://github.com/NGC6543/FinanceBot.git
 ```
 
+Создать файл .env и указать API токен бота:
+```bash
+API_TOKEN=*ТОКЕН БОТА*
+POSTGRES_DB="finance"
+DB_HOST=db
+POSTGRES_USER=<ваш логин (обычно postgres)>
+POSTGRES_PASSWORD=<ваш пароль>
+DB_PORT=5432
+```
+
 Перейти в директорию infra:
 ```bash
 cd infra/
@@ -47,7 +57,7 @@ https://www.postgresql.org/download/
 ```bash
 API_TOKEN=*ТОКЕН БОТА*
 POSTGRES_DB="finance"
-DB_HOST=db
+DB_HOST=localhost
 POSTGRES_USER=<ваш логин (обычно postgres)>
 POSTGRES_PASSWORD=<ваш пароль>
 DB_PORT=5432
