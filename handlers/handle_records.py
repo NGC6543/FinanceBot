@@ -7,9 +7,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.formatting import Bold, Text, as_line
 
 from .finance_db import FinanceDb
-from kbds.reply import (
-    menu_keyboard, catogories_keyboard, show_expenses_keyboard,
-    CATEGORIES, DATA_RETRIVE_CHOICES)
+from kbds.reply import make_keyboard
 
 
 """
@@ -23,6 +21,11 @@ from kbds.reply import (
 
 router = Router()
 db = FinanceDb()
+CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Прочее')
+DATA_RETRIVE_CHOICES = (
+    'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
+    'По категориям'
+)
 
 
 class EnterExpenses(StatesGroup):
@@ -73,11 +76,12 @@ async def show_menu(message: types.Message):
     logging.info('Starting display commands in menulist function')
     await message.answer(
         'Выберите команду',
-        reply_markup=menu_keyboard.as_markup(
-            resize_keyboard=True,
-            input_field_placeholder='Выберите функцию.',
-            one_time_keyboard=True,
-        ),
+        reply_markup=make_keyboard(
+            'Внести расходы',
+            'Показать расходы',
+            'Удалить расход',
+            placeholder='Выберите функцию.'
+        )
     )
 
 
@@ -88,9 +92,9 @@ async def choice_category(message: types.Message):
     logging.info('Start display choice_category function')
     await message.answer(
         'Выберите категорию',
-        reply_markup=catogories_keyboard.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=True,
+        reply_markup=make_keyboard(
+            *CATEGORIES,
+            placeholder='Выберите категорию'
         ),
     )
 
@@ -107,9 +111,17 @@ async def get_text_expense(message: types.Message, state: FSMContext):
     await state.set_state(EnterExpenses.enter_text)
 
 
-@router.message(
-    EnterExpenses.enter_text,
-)
+@router.message(StateFilter('*'), Command('отмена'))
+@router.message(StateFilter('*'), F.text.casefold() == 'отмена')
+async def cancel_handler(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+    await state.clear()
+    await message.answer('Действие отменено')
+
+
+@router.message(EnterExpenses.enter_text, F.text)
 async def get_money_expense(message: types.Message, state: FSMContext):
     """Function for getting user's money.
     """
@@ -120,7 +132,7 @@ async def get_money_expense(message: types.Message, state: FSMContext):
     await state.set_state(EnterExpenses.enter_money)
 
 
-@router.message(EnterExpenses.enter_money)
+@router.message(EnterExpenses.enter_money, F.text)
 async def adding_data_to_db(message: types.Message, state: FSMContext):
     """Function for adding user's expense.
     """
@@ -151,9 +163,9 @@ async def retrive_data(message: types.Message):
     logging.info('Start retrive_data function')
     await message.answer(
         'Выберите за какой период показать данные.',
-        reply_markup=show_expenses_keyboard.as_markup(
-            resize_keyboard=True,
-            one_time_keyboard=True,
+        reply_markup=make_keyboard(
+            *DATA_RETRIVE_CHOICES,
+            placeholder='Выберите период'
         ),
     )
 
