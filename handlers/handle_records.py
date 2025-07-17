@@ -1,4 +1,5 @@
 import logging
+import re
 
 from aiogram import F, Router, types
 from aiogram.filters import Command, StateFilter
@@ -25,6 +26,7 @@ DATA_RETRIVE_CHOICES = (
     'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
     'По категориям', 'По определенному слову'
 )
+TELEGRAM_MAX_MESSAGE_LEN = 4096
 
 
 class EnterExpenses(StatesGroup):
@@ -50,11 +52,31 @@ class DeleteExpense(StatesGroup):
     expense_id = State()
 
 
+async def check_len_message(message):
+    """Function for check text length.
+    It doesn't be more than 4096.
+    """
+    logging.info('Function that check text length.')
+    parts = []
+    current = ""
 
+    segments = re.split(r'(<br>|</p>|</div>|\n)', message, flags=re.IGNORECASE)
+
+    for segment in segments:
+        if len(current) + len(segment) < TELEGRAM_MAX_MESSAGE_LEN:
+            current += segment
+        else:
+            parts.append(current)
+            current = segment
+    if current:
+        parts.append(current)
+
+    return parts
 
 async def return_data_from_db(data, message, category=False):
-    """Additional function for getting data either by date or category.
+    """General function for getting data either by date or category.
     """
+    logging.info('General function for return data from db')
     if not data:
         await message.answer(f'За период {message.text} данных не было.')
         return
@@ -80,7 +102,9 @@ async def return_data_from_db(data, message, category=False):
             )
             total_sum += info.money
     result_string += Text('Общая сумма: ', Bold(round(total_sum, 2)))
-    await message.answer(result_string.as_html())
+    result_string = await check_len_message(result_string.as_html())
+    for string in result_string:
+        await message.answer(string, parse_mode="HTML")
 
 
 @router.message(Command('menulist'))

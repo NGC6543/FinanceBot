@@ -22,11 +22,11 @@ DATE_RANGE_CHOICES_DICT = {
     'За всё время': None,
 }
 
-DB_DATE_DATA = namedtuple(
-    'DB_DATE_DATA',
+DbDateData = namedtuple(
+    'DbDateData',
     'id, text, money, category, add_date'
 )
-DB_CATEGORY_DATA = namedtuple('DB_CATEGORY_DATA', 'money, category')
+DbCategoryData = namedtuple('DbCategoryData', 'money, category')
 
 
 class FinanceDb:
@@ -49,14 +49,14 @@ class FinanceDb:
             cursor.execute(open("schema.sql", "r").read())
         db.commit()
         db.close()
-    
-    def getting_data_from_db(self, query, nmtuple=DB_DATE_DATA):
+
+    def getting_data_from_db(self, query, nmtuple=DbDateData):
+        """General function for getting data from db query."""
         rows = []
         try:
             with self.connect_db() as con:
                 cur = con.cursor()
-                start_date, end_date = first_day_this_month, today
-                cur.execute(query)
+                cur.execute(*query)
                 rows = cur.fetchall()
                 tuple_rows = (
                     nmtuple._make(row) for row in rows
@@ -95,53 +95,30 @@ class FinanceDb:
 
     def retrive_data_by_date(self, date, user_id):
         """Function for retrieving data by date."""
-        rows = []
-        query =  """SELECT id, text, money, category,
+        query_all_date =  """SELECT id, text, money, category,
                         add_date::timestamp
                         FROM finance
                         WHERE user_id = %s""", (user_id,)
-        # return self.getting_data_from_db(query, DB_DATE_DATA)
-        try:
-            with self.connect_db() as con:
-                cur = con.cursor()
-                get_date = DATE_RANGE_CHOICES_DICT.get(date)
-                if not get_date:
-                    cur.execute(
-                        """SELECT id, text, money, category,
-                        add_date::timestamp
-                        FROM finance
-                        WHERE user_id = %s""", (user_id,)
-                    )
-                    rows = cur.fetchall()
-                else:
-                    start_date, end_date = get_date
-                    cur.execute(
-                        """SELECT id, text, money, category,
-                        add_date::timestamp
-                        FROM finance
-                        WHERE add_date::timestamp
-                        BETWEEN %s AND %s AND user_id = %s""", (
-                            start_date.isoformat(),
-                            end_date.isoformat(),
-                            user_id
-                        )
-                    )
-                    rows = cur.fetchall()
-                tuple_rows = (DB_DATE_DATA._make(row) for row in rows)
-                return tuple_rows
-        except psycopg2.OperationalError as e:
-            print('Failed to retrive data from table', e)
-        return rows
+        get_date = DATE_RANGE_CHOICES_DICT.get(date)
+        if not get_date:
+            return self.getting_data_from_db(query_all_date, DbDateData)
+        else:
+            start_date, end_date = get_date
+            query_certain_date = """SELECT id, text, money, category,
+            add_date::timestamp
+            FROM finance
+            WHERE add_date::timestamp
+            BETWEEN %s AND %s AND user_id = %s""", (
+                start_date.isoformat(),
+                end_date.isoformat(),
+                user_id
+            )
+            return self.getting_data_from_db(query_certain_date)
 
     def retrive_data_by_category(self, user_id):
         """Function for retrieving data by category."""
-        rows = []
-        try:
-            with self.connect_db() as con:
-                cur = con.cursor()
-                start_date, end_date = first_day_this_month, today
-                cur.execute(
-                    """SELECT SUM(money), category
+        start_date, end_date = first_day_this_month, today
+        query_category = """SELECT SUM(money), category
                     FROM finance
                     WHERE add_date::timestamp
                     BETWEEN %s AND %s AND user_id = %s
@@ -150,24 +127,12 @@ class FinanceDb:
                         end_date.isoformat(),
                         user_id,
                     )
-                )
-                rows = cur.fetchall()
-                tuple_rows = (
-                    DB_CATEGORY_DATA._make(row) for row in rows
-                )
-                return tuple_rows
-        except psycopg2.OperationalError as e:
-            print('Failed to retrive data from table', e)
-        return rows
+        return self.getting_data_from_db(query_category, nmtuple=DbCategoryData) # type: ignore
 
     def retrive_data_by_certain_word(self, user_id, user_word):
         """Function for retrieving data by a certain word."""
-        try:
-            with self.connect_db() as con:
-                cur = con.cursor()
-                start_date, end_date = first_day_this_month, today
-                cur.execute(
-                    """SELECT id, text, money, category,
+        start_date, end_date = first_day_this_month, today
+        query_certain_word = """SELECT id, text, money, category,
                     add_date::timestamp
                     FROM finance
                     WHERE add_date::timestamp
@@ -178,14 +143,7 @@ class FinanceDb:
                         user_id,
                         '%' + user_word + '%',
                     )
-                )
-                rows = cur.fetchall()
-                tuple_rows = (
-                    DB_DATE_DATA._make(row) for row in rows
-                )
-                return tuple_rows
-        except psycopg2.OperationalError as e:
-            print('Failed to delete data from table', e)
+        return self.getting_data_from_db(query_certain_word)
 
     def delete_record_by_id(self, record_id, user_id):
         """Function for deleting data by id."""
