@@ -49,6 +49,22 @@ class FinanceDb:
             cursor.execute(open("schema.sql", "r").read())
         db.commit()
         db.close()
+    
+    def getting_data_from_db(self, query, nmtuple=DB_DATE_DATA):
+        rows = []
+        try:
+            with self.connect_db() as con:
+                cur = con.cursor()
+                start_date, end_date = first_day_this_month, today
+                cur.execute(query)
+                rows = cur.fetchall()
+                tuple_rows = (
+                    nmtuple._make(row) for row in rows
+                )
+                return tuple_rows
+        except psycopg2.OperationalError as e:
+            print('Failed to retrive data from table', e)
+        return rows
 
     def adding_data(self, text, money, category, user_id):
         """Function for adding data in db."""
@@ -80,6 +96,11 @@ class FinanceDb:
     def retrive_data_by_date(self, date, user_id):
         """Function for retrieving data by date."""
         rows = []
+        query =  """SELECT id, text, money, category,
+                        add_date::timestamp
+                        FROM finance
+                        WHERE user_id = %s""", (user_id,)
+        # return self.getting_data_from_db(query, DB_DATE_DATA)
         try:
             with self.connect_db() as con:
                 cur = con.cursor()
@@ -138,6 +159,33 @@ class FinanceDb:
         except psycopg2.OperationalError as e:
             print('Failed to retrive data from table', e)
         return rows
+
+    def retrive_data_by_certain_word(self, user_id, user_word):
+        """Function for retrieving data by a certain word."""
+        try:
+            with self.connect_db() as con:
+                cur = con.cursor()
+                start_date, end_date = first_day_this_month, today
+                cur.execute(
+                    """SELECT id, text, money, category,
+                    add_date::timestamp
+                    FROM finance
+                    WHERE add_date::timestamp
+                    BETWEEN %s AND %s AND user_id = %s
+                    AND text ILIKE %s;""", (
+                        start_date.isoformat(),
+                        end_date.isoformat(),
+                        user_id,
+                        '%' + user_word + '%',
+                    )
+                )
+                rows = cur.fetchall()
+                tuple_rows = (
+                    DB_DATE_DATA._make(row) for row in rows
+                )
+                return tuple_rows
+        except psycopg2.OperationalError as e:
+            print('Failed to delete data from table', e)
 
     def delete_record_by_id(self, record_id, user_id):
         """Function for deleting data by id."""

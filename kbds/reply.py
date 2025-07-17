@@ -1,8 +1,11 @@
-from aiogram.types import KeyboardButton, KeyboardButton
+from aiogram.types import KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
 def make_keyboard(*btns, sizes=(2,), placeholder='Выберите функцию'):
+    """
+    Function for creating keyboards.
+    """
     keyboard_builder = ReplyKeyboardBuilder()
     for text in btns:
         keyboard_builder.add(KeyboardButton(text=text))

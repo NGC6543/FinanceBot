@@ -9,6 +9,9 @@ router = Router()
 
 @router.message(Command('start', 'help'))
 async def return_help_message(message: types.Message):
+    """
+    Function that show help message for user.
+    """
     logging.info('Starting function with help command')
     help_message = """
     Для ввода расходов выберите команду /menulist.

@@ -10,13 +10,12 @@ from .finance_db import FinanceDb
 from kbds.reply import make_keyboard
 
 
-"""
-С помощь конечных автоматов ведем диалог с пользователем для получения
-текста расхода и суммы. По пути пользователь также выбирает категорию,
-которую мы храним в State().
 
-Удаление также происходит с помощь конечных автоматов.
-"""
+# С помощь конечных автоматов ведем диалог с пользователем для получения
+# текста расхода и суммы. По пути пользователь также выбирает категорию,
+# которую мы храним в State().
+# Удаление также происходит с помощь конечных автоматов.
+
 
 
 router = Router()
@@ -24,18 +23,33 @@ db = FinanceDb()
 CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Прочее')
 DATA_RETRIVE_CHOICES = (
     'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
-    'По категориям'
+    'По категориям', 'По определенному слову'
 )
 
 
 class EnterExpenses(StatesGroup):
+    """
+    State for enter expense.
+    """
     enter_text = State()
     enter_money = State()
     category = State()
 
 
+class SearchByWord(StatesGroup):
+    """
+    State for searcy by a word.
+    """
+    word_for_search = State()
+
+
 class DeleteExpense(StatesGroup):
+    """
+    State for delete expense.
+    """
     expense_id = State()
+
+
 
 
 async def return_data_from_db(data, message, category=False):
@@ -114,6 +128,7 @@ async def get_text_expense(message: types.Message, state: FSMContext):
 @router.message(StateFilter('*'), Command('отмена'))
 @router.message(StateFilter('*'), F.text.casefold() == 'отмена')
 async def cancel_handler(message: types.Message, state: FSMContext):
+    """Function for canceling action."""
     current_state = await state.get_state()
     if current_state is None:
         return
@@ -177,6 +192,25 @@ async def get_data_by_category(message: types.Message):
     logging.info('Start get_data_by_category function')
     data = db.retrive_data_by_category(message.chat.id)
     await return_data_from_db(data, message, category=True)
+
+
+@router.message(StateFilter(None), F.text == 'По определенному слову')
+async def get_word_from_user(message: types.Message, state: FSMContext):
+    """Function for getting certain word from user.
+    """
+    logging.info('Start get_word_from_user function')
+    await message.answer('Введите слово для поиска:')
+    await state.set_state(SearchByWord.word_for_search)
+
+
+@router.message(SearchByWord.word_for_search, F.text)
+async def get_data_by_certain_word(message: types.Message, state: FSMContext):
+    """Function for getting data by certain word.
+    """
+    logging.info('Start get_data_by_certain_word function')
+    data = db.retrive_data_by_certain_word(message.chat.id, message.text)
+    await return_data_from_db(data, message)
+    await state.clear()
 
 
 @router.message(F.text.in_(DATA_RETRIVE_CHOICES))
