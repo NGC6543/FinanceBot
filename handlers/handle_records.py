@@ -21,7 +21,7 @@ from kbds.reply import make_keyboard
 
 router = Router()
 db = FinanceDb()
-CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Прочее')
+CATEGORIES = ('Еда', 'Одежда', 'Техника', 'Машина', 'Прочее')
 DATA_RETRIVE_CHOICES = (
     'За сегодня', 'За этот месяц', 'За прошлый месяц', 'За всё время',
     'По категориям', 'По определенному слову'
@@ -123,8 +123,8 @@ async def show_menu(message: types.Message):
     )
 
 
-@router.message(F.text == 'Внести расходы')
-async def choice_category(message: types.Message):
+@router.message(StateFilter(None), F.text == 'Внести расходы')
+async def choice_category(message: types.Message, state: FSMContext):
     """Function for displaying categories.
     """
     logging.info('Start display choice_category function')
@@ -132,16 +132,18 @@ async def choice_category(message: types.Message):
         'Выберите категорию',
         reply_markup=make_keyboard(
             *CATEGORIES,
-            placeholder='Выберите категорию'
+            placeholder='Выберите или введи сами категорию'
         ),
     )
+    await state.set_state(EnterExpenses.category)
 
 
-@router.message(StateFilter(None), F.text.in_(CATEGORIES))
+@router.message(EnterExpenses.category, F.text.in_(CATEGORIES) | F.text)
 async def get_text_expense(message: types.Message, state: FSMContext):
     """Function for getting user's text.
     """
     logging.info('Start display write_records_in_db function')
+    await message.answer("YUES")
     await state.update_data(category=message.text)
     await message.answer(
         'Введите текст расхода:',
@@ -158,6 +160,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         return
     await state.clear()
     await message.answer('Действие отменено')
+    await show_menu(message)
 
 
 @router.message(EnterExpenses.enter_text, F.text)
