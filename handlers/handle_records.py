@@ -143,7 +143,6 @@ async def get_text_expense(message: types.Message, state: FSMContext):
     """Function for getting user's text.
     """
     logging.info('Start display write_records_in_db function')
-    await message.answer("YUES")
     await state.update_data(category=message.text)
     await message.answer(
         'Введите текст расхода:',
