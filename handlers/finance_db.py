@@ -30,9 +30,10 @@ DbCategoryData = namedtuple('DbCategoryData', 'money, category')
 
 
 class FinanceDb:
+    """Main class for using DB."""
 
     def connect_db(self):
-        """Function for creating connection with db."""
+        """Create connection with db."""
         conn = psycopg2.connect(
             dbname=os.getenv('POSTGRES_DB'),
             host=os.getenv('DB_HOST', 'localhost'),
@@ -43,10 +44,10 @@ class FinanceDb:
         return conn
 
     def create_db(self):
-        """Function for creating tables in db."""
+        """Create tables in db."""
         db = self.connect_db()
         with db.cursor() as cursor:
-            cursor.execute(open("schema.sql", "r").read())
+            cursor.execute(open("schema.sql", "r", encoding='utf-8').read())
         db.commit()
         db.close()
 
@@ -62,12 +63,12 @@ class FinanceDb:
                     nmtuple._make(row) for row in rows
                 )
                 return tuple_rows
-        except psycopg2.OperationalError as e:
-            print('Failed to retrive data from table', e)
+        except psycopg2.OperationalError as error:
+            print('Failed to retrive data from table', error)
         return rows
 
     def adding_data(self, text, money, category, user_id):
-        """Function for adding data in db."""
+        """Add data in db."""
         try:
             with self.connect_db() as con:
                 cur = con.cursor()
@@ -90,11 +91,11 @@ class FinanceDb:
                     )
                 )
                 con.commit()
-        except psycopg2.OperationalError as e:
-            print('Failed to add data into table', e)
+        except psycopg2.OperationalError as error:
+            print('Failed to add data into table', error)
 
     def retrive_data_by_date(self, date, user_id):
-        """Function for retrieving data by date."""
+        """Retrive data by date."""
         query_all_date =  """SELECT id, text, money, category,
                         add_date::timestamp
                         FROM finance
@@ -116,7 +117,7 @@ class FinanceDb:
             return self.getting_data_from_db(query_certain_date)
 
     def retrive_data_by_category(self, user_id):
-        """Function for retrieving data by category."""
+        """Retrive data by category."""
         start_date, end_date = first_day_this_month, today
         query_category = """SELECT SUM(money), category
                     FROM finance
@@ -127,10 +128,13 @@ class FinanceDb:
                         end_date.isoformat(),
                         user_id,
                     )
-        return self.getting_data_from_db(query_category, nmtuple=DbCategoryData) # type: ignore
+        return self.getting_data_from_db(
+            query_category,
+            nmtuple=DbCategoryData
+        )
 
     def retrive_data_by_certain_word(self, user_id, user_word):
-        """Function for retrieving data by a certain word."""
+        """Retrive data by a certain word."""
         start_date, end_date = first_day_this_month, today
         query_certain_word = """SELECT id, text, money, category,
                     add_date::timestamp
@@ -146,7 +150,7 @@ class FinanceDb:
         return self.getting_data_from_db(query_certain_word)
 
     def delete_record_by_id(self, record_id, user_id):
-        """Function for deleting data by id."""
+        """Delete data by id."""
         try:
             with self.connect_db() as con:
                 cur = con.cursor()
@@ -161,6 +165,6 @@ class FinanceDb:
                     """DELETE FROM finance
                     WHERE id = %s""", (record_id,))
                 con.commit()
-        except psycopg2.OperationalError as e:
-            print('Failed to delete data from table', e)
+        except psycopg2.OperationalError as error:
+            print('Failed to delete data from table', error)
         return True

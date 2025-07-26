@@ -11,12 +11,10 @@ from .finance_db import FinanceDb
 from kbds.reply import make_keyboard
 
 
-
 # С помощь конечных автоматов ведем диалог с пользователем для получения
 # текста расхода и суммы. По пути пользователь также выбирает категорию,
 # которую мы храним в State().
 # Удаление также происходит с помощь конечных автоматов.
-
 
 
 router = Router()
@@ -30,31 +28,29 @@ TELEGRAM_MAX_MESSAGE_LEN = 4096
 
 
 class EnterExpenses(StatesGroup):
-    """
-    State for enter expense.
-    """
+    """State for enter expense."""
+
     enter_text = State()
     enter_money = State()
     category = State()
 
 
 class SearchByWord(StatesGroup):
-    """
-    State for searcy by a word.
-    """
+    """State for searcy by a word."""
+
     word_for_search = State()
 
 
 class DeleteExpense(StatesGroup):
-    """
-    State for delete expense.
-    """
+    """State for delete expense."""
+
     expense_id = State()
 
 
 async def check_len_message(message):
-    """Function for check text length.
-    It doesn't be more than 4096.
+    """Check length message.
+
+    It should not exceed 4096 characters.
     """
     logging.info('Function that check text length.')
     parts = []
@@ -73,9 +69,9 @@ async def check_len_message(message):
 
     return parts
 
+
 async def return_data_from_db(data, message, category=False):
-    """General function for getting data either by date or category.
-    """
+    """General function for getting data either by date or category."""
     logging.info('General function for return data from db')
     if not data:
         await message.answer(f'За период {message.text} данных не было.')
@@ -109,8 +105,7 @@ async def return_data_from_db(data, message, category=False):
 
 @router.message(Command('menulist'))
 async def show_menu(message: types.Message):
-    """Function for displaying menu.
-    """
+    """Display the menu."""
     logging.info('Starting display commands in menulist function')
     await message.answer(
         'Выберите команду',
@@ -125,8 +120,7 @@ async def show_menu(message: types.Message):
 
 @router.message(StateFilter(None), F.text == 'Внести расходы')
 async def choice_category(message: types.Message, state: FSMContext):
-    """Function for displaying categories.
-    """
+    """Display categories."""
     logging.info('Start display choice_category function')
     await message.answer(
         'Выберите категорию',
@@ -140,8 +134,7 @@ async def choice_category(message: types.Message, state: FSMContext):
 
 @router.message(EnterExpenses.category, F.text.in_(CATEGORIES) | F.text)
 async def get_text_expense(message: types.Message, state: FSMContext):
-    """Function for getting user's text.
-    """
+    """Get user's text."""
     logging.info('Start display write_records_in_db function')
     await state.update_data(category=message.text)
     await message.answer(
@@ -153,7 +146,7 @@ async def get_text_expense(message: types.Message, state: FSMContext):
 @router.message(StateFilter('*'), Command('отмена'))
 @router.message(StateFilter('*'), F.text.casefold() == 'отмена')
 async def cancel_handler(message: types.Message, state: FSMContext):
-    """Function for canceling action."""
+    """Cancel action."""
     current_state = await state.get_state()
     if current_state is None:
         return
@@ -164,8 +157,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 @router.message(EnterExpenses.enter_text, F.text)
 async def get_money_expense(message: types.Message, state: FSMContext):
-    """Function for getting user's money.
-    """
+    """Get user's money."""
     await state.update_data(enter_text=message.text.lower())
     await message.answer(
         text=f"Вы ввели {message.text}, теперь введите сумму:",
@@ -175,8 +167,7 @@ async def get_money_expense(message: types.Message, state: FSMContext):
 
 @router.message(EnterExpenses.enter_money, F.text)
 async def adding_data_to_db(message: types.Message, state: FSMContext):
-    """Function for adding user's expense.
-    """
+    """Add in DB user's expense."""
     user_data = await state.get_data()
     try:
         float(message.text)
@@ -199,8 +190,7 @@ async def adding_data_to_db(message: types.Message, state: FSMContext):
 
 @router.message(F.text == 'Показать расходы')
 async def retrive_data(message: types.Message):
-    """Function for user's choices date.
-    """
+    """User's choices date."""
     logging.info('Start retrive_data function')
     await message.answer(
         'Выберите за какой период показать данные.',
@@ -213,8 +203,7 @@ async def retrive_data(message: types.Message):
 
 @router.message(F.text == 'По категориям')
 async def get_data_by_category(message: types.Message):
-    """Function for getting data group by a category.
-    """
+    """Get data group by a category."""
     logging.info('Start get_data_by_category function')
     data = db.retrive_data_by_category(message.chat.id)
     await return_data_from_db(data, message, category=True)
@@ -222,8 +211,7 @@ async def get_data_by_category(message: types.Message):
 
 @router.message(StateFilter(None), F.text == 'По определенному слову')
 async def get_word_from_user(message: types.Message, state: FSMContext):
-    """Function for getting certain word from user.
-    """
+    """Get certain word from user."""
     logging.info('Start get_word_from_user function')
     await message.answer('Введите слово для поиска:')
     await state.set_state(SearchByWord.word_for_search)
@@ -231,8 +219,7 @@ async def get_word_from_user(message: types.Message, state: FSMContext):
 
 @router.message(SearchByWord.word_for_search, F.text)
 async def get_data_by_certain_word(message: types.Message, state: FSMContext):
-    """Function for getting data by certain word.
-    """
+    """Get data by certain word."""
     logging.info('Start get_data_by_certain_word function')
     data = db.retrive_data_by_certain_word(message.chat.id, message.text)
     await return_data_from_db(data, message)
@@ -241,8 +228,7 @@ async def get_data_by_certain_word(message: types.Message, state: FSMContext):
 
 @router.message(F.text.in_(DATA_RETRIVE_CHOICES))
 async def get_date_with_range(message: types.Message):
-    """Function for getting data with a specific date.
-    """
+    """Get data with a specific date."""
     logging.info('Start get_date_range function')
     data = db.retrive_data_by_date(message.text, message.chat.id)
     await return_data_from_db(data, message, category=False)
@@ -250,8 +236,7 @@ async def get_date_with_range(message: types.Message):
 
 @router.message(StateFilter(None), F.text == 'Удалить расход')
 async def remove_expense(message: types.Message, state: FSMContext):
-    """Function for deleting expense by id.
-    """
+    """Delete expense by id."""
     logging.info('Start display remove_expense function')
     data = db.retrive_data_by_date('За этот месяц', message.chat.id)
     await message.answer('Расходы за этот месяц:')
@@ -262,8 +247,7 @@ async def remove_expense(message: types.Message, state: FSMContext):
 
 @router.message(DeleteExpense.expense_id)
 async def get_id_to_remove_from_db(message: types.Message, state: FSMContext):
-    """Delete record from db by id
-    """
+    """Delete record from db by id."""
     logging.info('Delete record from db by id')
     await state.update_data(expense_id=message.text)
     user_data = await state.get_data()
